@@ -2,7 +2,7 @@
  * @Author: zhanghuiming
  * @Date:   2017-09-21 09:59:48
  * @Last Modified by:   zhanghuiming
- * @Last Modified time: 2017-09-21 11:12:30
+ * @Last Modified time: 2017-09-25 18:38:10
  */
 import React from 'react';
 import {
@@ -57,7 +57,9 @@ class Login extends React.Component {
 			})
 		})
 	}
-
+	componentWillMount(){
+		console.log('=====componentWillMount=======');
+	}
 	render() {
 		const {
 			from
@@ -76,9 +78,10 @@ class Login extends React.Component {
 				<Redirect to={from}/>
 			)
 		}
-
+		var URL = window.location.href;
 		return (
 			<div>
+				<p>{URL}</p>
 				<p>You must log in to view the page at {from.pathname}</p>
 				<button onClick={this.login}>Log in</button>
 			</div>

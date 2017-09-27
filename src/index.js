@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Route, Link } from 'react-router-dom';
+import { Router } from 'react-router';
+
+import {BrowserRouter ,Route, button } from 'react-router-dom';
 
 import './index.css';
 // import App from './App';
@@ -12,41 +14,89 @@ import NoMatch from './NoMatch';
 import RecursivePath from './RecursivePath';
 import SidebarExample from './Sidebar';
 import RouteConfigExample from './RouteConfig';
-
 import registerServiceWorker from './registerServiceWorker';
+import HomePage from './HomePage';
+
+import createBrowserHistory from 'history/createBrowserHistory';
+var history = createBrowserHistory();
+const location = history.location;
+const unlisten = history.listen((location, action) => {
+  console.log(action, location.pathname, location.state)
+})
+
+
+const routes = [
+	{
+		path:'/params',
+		component:ParamsExample,
+	},
+	{
+		path:'/redirects',
+		component:AuthExample,
+	},
+	{
+		path:'/customLink',
+		component:CustomLinkExample,
+	},
+	{
+		path:'/noMatch',
+		component:NoMatch,
+	},
+	{
+		path:'/routerconf',
+		component:RouteConfigExample,
+	},
+	{
+		path:'/sidebar',
+		component:SidebarExample,
+	},
+	{
+		path:'/home',
+		component:HomePage,
+	}
+]
+
+function changeFunc(e){
+	history.push(e.target.dataset.to)
+}
+
+const RouteWithSubRoutes = (route)=>(<Route path={route.path} render={props =>(
+			<route.component {...props} routes={route.routes}/>
+	)}/>)
 
 const App = ()=>(
-	<BrowserRouter basename="/" forceRefresh={true}>
+	<Router basename="/"  forceRefresh={true} history={history} >
 		<div>
 			<ul>
 				<li>
-					<Link to="/params">ParamsExample</Link>
+					<button onClick={changeFunc}  data-to="/params?id=1">ParamsExample</button>
 				</li>
 				<li>
-					<Link to="/redirects">RedirectsExample</Link>
+					<button onClick={changeFunc}  data-to="/redirects">RedirectsExample</button>
 				</li>
 				<li>
-					<Link to="/customLink">CustomLinkExample</Link>
+					<button onClick={changeFunc}  data-to="/customLink">CustomLinkExample</button>
 				</li>
 				<li>
-					<Link to="/noMatch">NoMatchExample</Link>
+					<button onClick={changeFunc}  data-to="/noMatch">NoMatchExample</button>
 				</li>
 				<li>
-					<Link to="/routerconf">RouteConfigExample</Link>
+					<button onClick={changeFunc}  data-to="/routerconf">RouteConfigExample</button>
 				</li>
 				<li>
-					<Link to="/sidebar">SidebarExample</Link>
+					<button  onClick={changeFunc}  data-to="/sidebar">SidebarExample</button>
+				</li>
+				<li>
+					<button  onClick={changeFunc}  data-to="/home">HomePage</button>
 				</li>
 			</ul>
 
-			<Route path="/params" component={ParamsExample}/>
-			<Route path="/redirects" component={AuthExample}/>
-			<Route path="/customLink" component={CustomLinkExample}/>
-			<Route path="/noMatch" component={NoMatch}/>
-			<Route path="/sidebar" component={SidebarExample}/>
-			<Route path="/routerconf" component={RouteConfigExample}/>
+			{routes.map((route, i) => (
+		        <RouteWithSubRoutes key={i} {...route}/>
+		     ))}
+			
 		</div>
-	</BrowserRouter>
+	</Router>
 	)
 
 ReactDOM.render(<App/>, document.getElementById('root'));
